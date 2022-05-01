@@ -1,0 +1,116 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h> // determines various properties of various variable types
+#include <strings.h>
+
+int cost=0,visited [10],count=0;
+char path[1000]= "P"; //global variables
+struct tsp{
+
+    char name[10][10];
+    int graph[10][10]; //structure of cost matrix, diagonal of matrix has to be zero to avoid reflecting on itself
+};
+
+int findnextnode(int start,struct tsp x,int num_cities) //
+{
+    int nd,min=INT_MAX,min_index,democost,i;
+
+    	for(i=0;i < num_cities;i++)
+      {
+          if(!visited[i]&&x.graph[start][i] !=0 && x.graph[start][i]<min)
+
+        {
+          democost=x.graph[start][i]; // cost start node and the rest of the nodes
+          min=x.graph[start][i];
+          min_index=i;
+
+      }
+
+      }
+
+      nd=min_index; // hold index of minimum value
+      cost+=democost; // adds up minimum of each start node
+      return nd; // returns node of minimum to TSP function
+
+}
+
+
+void TSP(int start , struct tsp x ,int num_cities)
+{
+    int nextnode;
+    visited[start]=1; // marks first node with 1
+    strcat(path," -> ");
+    strcat(path,x.name[start]);
+    printf("%s ->",x.name[start]);
+    nextnode=findnextnode(start,x,num_cities); // calls 2nd function and sends node at which i am standing, structure, and num of cities.
+    count ++;
+    if(count==num_cities-1)
+    {
+        printf("%s ->",x.name[nextnode]);
+        strcat(path," -> ");
+        strcat(path,x.name[nextnode]);
+        int v=0;
+        printf("%s",x.name[v]);
+        cost+=x.graph[nextnode][v];
+        printf("\n%d",cost);
+        strcat(path," -> ");
+        strcat(path,x.name[v]);
+        return;
+    }//to next node return min
+
+  TSP(nextnode,x, num_cities);  // recursive step but sends the next node as the start node
+}
+
+int main()
+{
+    struct tsp x; // 2D array of cost matrix
+
+    int visited[10],i,j,start, num_cities;
+    printf("Enter No. of Cities: ");
+	scanf("%d",&num_cities);
+
+	for(int i=0; i<num_cities;i++)
+    {
+        printf("enter name of city:\n");
+        scanf("%s",x.name[i]);
+    }
+	printf("Enter start: "); // start node
+  scanf("%d",&x.graph[i][j]);
+
+	for(i=0;i< num_cities ;i++)
+      visited[i]=0; // to keep track of visited cities, to avoid going back and forth
+
+	printf("\nEnter Cost Matrix\n\n");
+
+	for(i=0;i<num_cities;i++) // inputs 2D cost matrix
+	{
+	    printf("Enter elements of row %d:\n",i+1);
+	    for(j=0;j<num_cities ;j++)
+	    {
+	        scanf("%d",&x.graph[i][j]);
+
+	    }
+	}
+
+    FILE *f1 = fopen("C:\\Users\\LENOVO\\OneDrive\\Desktop\\tsp problem","a");
+    fprintf(f1,"\n\nThe cost list is:\n\n");
+
+	for( i=0;i < num_cities;i++)
+	{
+		fprintf(f1,"\n\n");
+		for(j=0;j < num_cities;j++)
+			fprintf(f1,"\t%d",x.graph[i][j]);
+	}
+
+	fprintf(f1,"\n\n");
+	fclose(f1);
+	printf("TSP path:\n");
+	TSP(start,x,num_cities);// function call sends
+	FILE *f2 = fopen("C:\\Users\\LENOVO\\OneDrive\\Desktop\\tsp Problem","a");
+
+    fprintf(f2,"%s",path);
+    fclose(f2);
+
+
+
+    return 0;
